@@ -4,18 +4,19 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import VideoModal from "./components/VideoModal";
 
 const HERO_VIDEO = "/hero.mp4";
 
 const LIVE_COURSES = [
-  { id: 4510, title: "Contador Estratégico", rating: 9.92, lessons: 34, tag: "Contabilidade", banner: "https://s3.cefis.cloud/cefiscdn/uploads-v3/3f1486e4-e768-4ff9-af5f-08c25b79b53f-thumbnail.png" },
-  { id: 4552, title: "Saldo credor de PIS/COFINS", rating: 9.47, lessons: 20, tag: "Fiscal", banner: "https://s3.cefis.cloud/cefiscdn/uploads-v3/606ca82c-3086-477a-9fa3-2b473fa8f8e9-thumbnail.png" },
-  { id: 4547, title: "ECF 2026", rating: 9.51, lessons: 55, tag: "SPED", banner: "https://s3.cefis.cloud/cefiscdn/uploads-v3/b28f2d03-e894-47f7-91f3-2d014eb35b31-thumbnail.png" },
-  { id: 4517, title: "ECD 2026", rating: 9.61, lessons: 48, tag: "SPED", banner: "https://s3.cefis.cloud/cefiscdn/uploads-v3/5992f4d5-9cf5-44f0-9cc6-8f1af01d3d4a-thumbnail.png" },
-  { id: 4511, title: "Imposto de Transmissão de Bens Imóveis", rating: 9.56, lessons: 22, tag: "Tributário", banner: "https://s3.cefis.cloud/cefiscdn/uploads-v3/84d767dd-1ffe-4452-a3ec-e3e9e1b73e71-thumbnail.png" },
-  { id: 4556, title: "Comunicação Corporativa", rating: 9.04, lessons: 51, tag: "Habilidades", banner: "https://s3.cefis.cloud/cefiscdn/uploads-v3/a391a14a-61ab-4048-af26-bd41a15c3ddf-thumbnail.png" },
-  { id: 4516, title: "Teorias do Comércio Internacional", rating: 9.30, lessons: 18, tag: "Internacional", banner: "https://s3.cefis.cloud/cefiscdn/uploads-v3/a709f6be-d031-422f-ab03-3e07ef87f0f0-thumbnail.png" },
-  { id: 4501, title: "Preparatório Exame do CFC", rating: 9.66, lessons: 28, tag: "CFC", banner: "https://s3.cefis.cloud/cefiscdn/uploads-v3/a391a14a-61ab-4048-af26-bd41a15c3ddf-thumbnail.png" },
+  { id: 4510, title: "Contador Estratégico", rating: 9.92, lessons: 34, tag: "Contabilidade", banner: "https://s3.cefis.cloud/cefiscdn/uploads-v3/3f1486e4-e768-4ff9-af5f-08c25b79b53f-thumbnail.png", videoUrl: "https://cdn2.cefis.com.br/vod/30ad9d25-14af-4a90-8975-bafd45a5e502/720.mp4", lessonTitle: "Apresentação" },
+  { id: 4552, title: "Saldo credor de PIS/COFINS", rating: 9.47, lessons: 20, tag: "Fiscal", banner: "https://s3.cefis.cloud/cefiscdn/uploads-v3/606ca82c-3086-477a-9fa3-2b473fa8f8e9-thumbnail.png", videoUrl: "https://cdn2.cefis.com.br/vod/299aad09-7221-4097-b03b-b7ad4b13f90f/720.mp4", lessonTitle: "Apresentação" },
+  { id: 4547, title: "ECF 2026", rating: 9.51, lessons: 55, tag: "SPED", banner: "https://s3.cefis.cloud/cefiscdn/uploads-v3/b28f2d03-e894-47f7-91f3-2d014eb35b31-thumbnail.png", videoUrl: "https://cdn2.cefis.com.br/vod/3fe5e84f-d47b-4ce3-ae96-3eb11a7cbcc3/720.mp4", lessonTitle: "Introdução" },
+  { id: 4517, title: "ECD 2026", rating: 9.61, lessons: 48, tag: "SPED", banner: "https://s3.cefis.cloud/cefiscdn/uploads-v3/5992f4d5-9cf5-44f0-9cc6-8f1af01d3d4a-thumbnail.png", videoUrl: "https://cdn2.cefis.com.br/vod/0dff9741-a6b2-4ea7-928b-62e5a19f3b38/720.mp4", lessonTitle: "Apresentação" },
+  { id: 4511, title: "Imposto de Transmissão de Bens Imóveis", rating: 9.56, lessons: 22, tag: "Tributário", banner: "https://s3.cefis.cloud/cefiscdn/uploads-v3/84d767dd-1ffe-4452-a3ec-e3e9e1b73e71-thumbnail.png", videoUrl: "https://cdn2.cefis.com.br/vod/606eaf8e-c6e5-4d69-a979-03160cd45cae/720.mp4", lessonTitle: "Apresentação" },
+  { id: 4556, title: "Comunicação Corporativa", rating: 9.04, lessons: 51, tag: "Habilidades", banner: "https://s3.cefis.cloud/cefiscdn/uploads-v3/a391a14a-61ab-4048-af26-bd41a15c3ddf-thumbnail.png", videoUrl: "https://cdn2.cefis.com.br/vod/aafbde7f-04c6-40fa-a93f-11c392b29e6a/720.mp4", lessonTitle: "Introdução" },
+  { id: 4516, title: "Teorias do Comércio Internacional", rating: 9.30, lessons: 18, tag: "Internacional", banner: "https://s3.cefis.cloud/cefiscdn/uploads-v3/a709f6be-d031-422f-ab03-3e07ef87f0f0-thumbnail.png", videoUrl: "https://cdn2.cefis.com.br/vod/b2b9fe49-84e8-438d-bcf8-513924eb01c3/720.mp4", lessonTitle: "Apresentação" },
+  { id: 4501, title: "Preparatório Exame do CFC", rating: 9.66, lessons: 28, tag: "CFC", banner: "https://s3.cefis.cloud/cefiscdn/uploads-v3/a391a14a-61ab-4048-af26-bd41a15c3ddf-thumbnail.png", videoUrl: "https://cdn2.cefis.com.br/vod/e0873a3d-1315-4488-886b-08bc505fcb44/720.mp4", lessonTitle: "Apresentação" },
 ];
 
 const TICKER_ITEMS = [
@@ -27,6 +28,13 @@ const TICKER_ITEMS = [
 const AREAS = ["Contador", "Analista Fiscal", "Departamento Pessoal", "Outro"];
 
 type LiveCourse = typeof LIVE_COURSES[number];
+
+interface VideoState {
+  url: string;
+  title: string;
+  lesson: string;
+  courseId: number;
+}
 
 function Ticker() {
   return (
@@ -47,7 +55,7 @@ function Ticker() {
   );
 }
 
-function LiveCoursesRail() {
+function LiveCoursesRail({ onPlay }: { onPlay: (v: VideoState) => void }) {
   return (
     <div className="relative">
       <div className="absolute left-0 top-0 bottom-0 w-20 z-10" style={{ background: "linear-gradient(to right, #050505, transparent)" }} />
@@ -59,9 +67,10 @@ function LiveCoursesRail() {
         style={{ width: "max-content" }}
       >
         {[...LIVE_COURSES, ...LIVE_COURSES].map((c, i) => (
-          <div
+          <button
             key={i}
-            className="relative rounded-xl overflow-hidden shrink-0 border group"
+            onClick={() => onPlay({ url: c.videoUrl, title: c.title, lesson: c.lessonTitle, courseId: c.id })}
+            className="relative rounded-xl overflow-hidden shrink-0 border group cursor-pointer text-left"
             style={{ width: 220, height: 130, borderColor: "rgba(255,255,255,0.06)", background: "#111" }}
           >
             <Image
@@ -73,6 +82,12 @@ function LiveCoursesRail() {
               unoptimized
             />
             <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 60%)" }} />
+            {/* Play button overlay */}
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "rgba(201,168,73,0.9)", backdropFilter: "blur(4px)" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#050505"><polygon points="5 3 19 12 5 21 5 3" /></svg>
+              </div>
+            </div>
             <div className="absolute bottom-0 left-0 right-0 p-3">
               <div className="text-xs font-bold text-white leading-tight mb-1 line-clamp-2">{c.title}</div>
               <div className="flex items-center gap-2">
@@ -81,7 +96,7 @@ function LiveCoursesRail() {
               </div>
             </div>
             <div className="absolute top-2 right-2 text-xs px-2 py-0.5 rounded-full font-bold" style={{ background: "rgba(201,168,73,0.2)", color: "#C9A849" }}>{c.tag}</div>
-          </div>
+          </button>
         ))}
       </motion.div>
     </div>
@@ -218,6 +233,7 @@ export default function LandingPage() {
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const videoOpacity = useTransform(scrollYProgress, [0, 0.6], [0.3, 0]);
   const contentY = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const [activeVideo, setActiveVideo] = useState<VideoState | null>(null);
 
   useEffect(() => {
     videoRef.current?.play().catch(() => {});
@@ -225,6 +241,14 @@ export default function LandingPage() {
 
   return (
     <div style={{ background: "#050505", color: "#fff", minHeight: "100vh", fontFamily: "var(--font-inter), Inter, sans-serif" }}>
+      <VideoModal
+        isOpen={!!activeVideo}
+        onClose={() => setActiveVideo(null)}
+        videoUrl={activeVideo?.url || ""}
+        courseTitle={activeVideo?.title || ""}
+        lessonTitle={activeVideo?.lesson}
+        courseId={activeVideo?.courseId}
+      />
 
       {/* ─── NAV ─── */}
       <header className="fixed top-0 left-0 right-0 z-50" style={{ background: "rgba(5,5,5,0.8)", backdropFilter: "blur(24px)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
@@ -241,12 +265,16 @@ export default function LandingPage() {
             </span>
           </div>
           <Ticker />
-          <div className="hidden md:flex items-center gap-3">
-            <Link href="/tutor" className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase px-4 py-2.5 rounded-lg transition-all hover:bg-white/5 border" style={{ borderColor: "rgba(201,168,73,0.3)", color: "#C9A849" }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <div className="hidden md:flex items-center gap-2">
+            <Link href="/tutor" className="flex items-center gap-1.5 text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-lg transition-all hover:bg-white/5 border" style={{ borderColor: "rgba(201,168,73,0.3)", color: "#C9A849" }}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z" />
               </svg>
-              Tutor IA
+              Tutor
+            </Link>
+            <Link href="/quiz" className="flex items-center gap-1.5 text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-lg transition-all hover:bg-white/5 border" style={{ borderColor: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.5)" }}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Quiz
             </Link>
             <Link href="/onboarding" className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase px-5 py-2.5 rounded-lg transition-all hover:scale-105 active:scale-95" style={{ background: "linear-gradient(135deg, #C9A849, #f0ca5e)", color: "#050505" }}>
               Começar Grátis
@@ -365,7 +393,7 @@ export default function LandingPage() {
             </Link>
           </div>
         </div>
-        <LiveCoursesRail />
+        <LiveCoursesRail onPlay={setActiveVideo} />
       </section>
 
       {/* ─── BENTO GRID ─── */}
